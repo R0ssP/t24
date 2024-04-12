@@ -1,0 +1,103 @@
+html {
+    background-color: #080E21;
+}
+
+.logo {
+    width: 80px; 
+    margin-right: 10px;
+    float: left;
+    background-color: #99D98C;
+}
+
+body {
+    color: #6FFFE9;
+}
+
+header {
+    border-bottom: 3px solid #2F9A5F;
+    padding-left: .5%;
+    padding-bottom: 1.5%;
+}
+
+header h1{
+    align-items: center;
+}
+
+.zach-img {
+    width: 10%;
+}
+.cody-img {
+    width: 10%;
+}
+.naphat-img {
+    width: 10%;
+}
+
+.footerImg {
+    position: relative;
+    bottom: 5%;
+    background-image: url('./images/seamless.png'); 
+    background-repeat: repeat-x; 
+    width: 100%; 
+    height: 200px;
+}
+
+footer {
+    font-size: smaller;
+    position: relative;
+    bottom: 0;
+}
+
+.bordered-image{
+    border: 10px groove #2F9A5F;
+}
+
+.NavBar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.NavBar ul li {
+    display: inline;
+}
+
+.NavBar ul li a {
+    display: inline-block;
+    margin-right: 10px;
+    text-decoration: none;
+    color: #2F9A5F; 
+    padding-top: 1%;
+}
+
+.NavBar ul li a:hover {
+    color: #6FFFE9; 
+}
+
+.content {
+    padding-top: 1%;
+}
+
+.button {
+    color: #6FFFE9;
+    background-color: #080E21;
+    border: 4px groove #2F9A5F;
+}
+
+::placeholder {
+    color: #6FFFE9; 
+  }
+
+.option {
+    background-color: #080E21;
+    color: #6FFFE9;
+    border: 2px solid #99D98C;
+}
+
+.table {
+    border: 4px groove #2F9A5F;
+}
+
+.firsttable {
+    width: 85%;
+}
