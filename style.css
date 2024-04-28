@@ -110,3 +110,35 @@ footer {
 .firsttable {
     width: 85%;
 }
+
+/* Color backgrounds for CCG page */
+.red{
+    background-color: red;
+}
+.orange{
+    background-color: orange;
+}
+.yellow{
+    background-color: yellow;
+}
+.green{
+    background-color: green;
+}
+.blue{
+    background-color: blue;
+}
+.purple{
+    background-color: purple;
+}
+.grey{
+    background-color: gray;
+}
+.brown{
+    background-color: brown;
+}
+.black{
+    background-color: black;
+}
+.teal{
+    background-color: teal;
+}

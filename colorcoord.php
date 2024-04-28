@@ -58,7 +58,7 @@
         </div>
         <div id="message"></div>
         <?php       
-            $color_options = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey', 'brown', 'black', 'teal'];
+            $color_options = ['---', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey', 'brown', 'black', 'teal'];
             
             echo "<form method='post' action='printable_view.php'>";
             echo "<input type='hidden' name='colors' value='$colors'>"; 
@@ -70,11 +70,13 @@
                     echo "<option value='$option'>$option</option>";
                 }
                 echo "</select></td>";
-                echo "<td width='80%'></td>";
+                echo "<td width='80%'><div><p id='dropdown$i'></p></div></td>";
                 echo "</tr>";
             }
             echo "</table>";
             echo "</form>";
+
+            echo "<div class='selectedButton'></div>";
 
             echo "<form method='get' action='printable_view.php'>";
             echo "<h2>Coordinate Table</h2>";
@@ -128,22 +130,54 @@
 </body>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var selectedColors = [];
+        let selectedColor = '---';
+        let selectedDropdown = 0;
+        let dropdownArray = Array.from({length: 10}, () => []);
 
-        function saveColor(color, index) {
-            selectedColors[index] = color;
+        function populateTable(outerArray) {
+            for (let i=0; i < outerArray.length; i++) {
+                let updateString = "dropdown" + i;
+                let updateElement = document.getElementById(updateString);
+                let stringUpdate = createString(dropdownArray[i]);
+                updateElement.innerHTML = stringUpdate;
+            }
+        }
+
+        function createString (innerArray) {
+            let returnString = "";
+            for (let i=0; i< innerArray.length; i++) {
+                if (i === innerArray.length - 1) {
+                    returnString += innerArray[i];
+                } else {
+                    returnString += innerArray[i];
+                    returnString += ", ";
+                }
+            }
+            return returnString;
+        }
+
+        function searchAndRemove(outerArray, value) {
+            for (let i = 0; i < outerArray.length; i++) {
+                const innerArray = outerArray[i];
+                const columnIndex = innerArray.indexOf(value);
+                if (columnIndex !== -1) {
+                    innerArray.splice(columnIndex, 1);
+                    return outerArray;
+                }
+            }
+            return outerArray;
         }
 
         const dropdowns = document.querySelectorAll('.color-dropdown');
 
-        dropdowns.forEach(dropdown => {
+        dropdowns.forEach((dropdown, index) => {
             let previousColor = dropdown.value;
 
             dropdown.addEventListener('change', event => {
-                const selectedColor = event.target.value;
+                selectedColor = event.target.value;
 
                 dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown && otherDropdown.value === selectedColor) {
+                    if (otherDropdown !== dropdown && otherDropdown.value === selectedColor && selectedColor !== '---') {
                         let messageNode = document.createTextNode("Duplicate color selection! Reverting to previous value.");
                         let messageElement = document.getElementById("message");
 
@@ -153,7 +187,17 @@
                     }
                 });
 
-                previousColor = selectedColor; 
+                selectedColorString = "<p>Selected color: " + selectedColor + "<br>Double click or change a dropdown to change the selected color.</p>";
+                document.getElementsByClassName('selectedButton')[0].innerHTML = selectedColorString;
+                previousColor = selectedColor;
+            });
+
+            dropdown.addEventListener('dblclick', event=> {
+                selectedColor = event.target.value;
+                selectedDropdown = index;
+
+                selectedColorString = "<p>Selected color: " + selectedColor + "<br>Double click or change a dropdown to change the selected color.</p>";
+                document.getElementsByClassName('selectedButton')[0].innerHTML = selectedColorString ;
             });
         });
 
@@ -164,11 +208,27 @@
 
                 let row = parseInt(this.dataset.row) + 1;
                 let col = parseInt(this.dataset.col);
-
                 col += 65;
                 colToLetter = String.fromCharCode(col);
+                let gridName = colToLetter + row;
 
-                document.getElementById('clickedButton').innerText = "Clicked Button: " + colToLetter + row;
+                document.getElementById('clickedButton').innerText = "Clicked Button: " + gridName;
+
+                if (selectedColor !== '---') {
+                    let currentClasses = button.getAttribute("class");
+                    let classesList = currentClasses.split(" ");
+                    classesList[2] = selectedColor;
+                    let updatedClasses = classesList.join(" ");
+                    
+                    button.setAttribute("class", updatedClasses);
+
+                    selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
+
+                    dropdownArray = searchAndRemove(dropdownArray, gridName);
+                    dropdownArray[selectedDropdown].push(gridName);
+
+                    populateTable(dropdownArray);
+                }
             })
         });
     });
