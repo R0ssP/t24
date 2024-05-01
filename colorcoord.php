@@ -137,48 +137,48 @@
     </footer>
 </body>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let selectedColor = '---';
-        let selectedDropdown = 0;
-        let dropdownArray = Array.from({length: 10}, () => []);
+document.addEventListener('DOMContentLoaded', function() {
+    let selectedColor = '---';
+    let selectedDropdown = 0;
+    let dropdownArray = Array.from({length: 10}, () => []);
 
-        function populateTable(outerArray) {
-            for (let i=0; i < outerArray.length; i++) {
-                let updateString = "dropdown" + i;
-                let updateElement = document.getElementById(updateString);
-                let stringUpdate = createString(dropdownArray[i]);
-                updateElement.innerHTML = stringUpdate;
+    function populateTable(outerArray) {
+        for (let i=0; i < outerArray.length; i++) {
+            let updateString = "dropdown" + i;
+            let updateElement = document.getElementById(updateString);
+            let stringUpdate = createString(dropdownArray[i]);
+            updateElement.innerHTML = stringUpdate;
+        }
+    }
+
+    function createString(innerArray) {
+        let returnString = "";
+        for (let i=0; i< innerArray.length; i++) {
+            if (i === innerArray.length - 1) {
+                returnString += innerArray[i];
+            } else {
+                returnString += innerArray[i];
+                returnString += ", ";
             }
         }
+        return returnString;
+    }
 
-        function createString (innerArray) {
-            let returnString = "";
-            for (let i=0; i< innerArray.length; i++) {
-                if (i === innerArray.length - 1) {
-                    returnString += innerArray[i];
-                } else {
-                    returnString += innerArray[i];
-                    returnString += ", ";
-                }
+    function searchAndRemove(outerArray, value) {
+        for (let i = 0; i < outerArray.length; i++) {
+            const innerArray = outerArray[i];
+            const columnIndex = innerArray.indexOf(value);
+            if (columnIndex !== -1) {
+                innerArray.splice(columnIndex, 1);
+                return outerArray;
             }
-            return returnString;
         }
+        return outerArray;
+    }
 
-        function searchAndRemove(outerArray, value) {
-            for (let i = 0; i < outerArray.length; i++) {
-                const innerArray = outerArray[i];
-                const columnIndex = innerArray.indexOf(value);
-                if (columnIndex !== -1) {
-                    innerArray.splice(columnIndex, 1);
-                    return outerArray;
-                }
-            }
-            return outerArray;
-        }
-
-        const dropdowns = document.querySelectorAll('.color-dropdown');
-
-        dropdowns.forEach((dropdown, index) => {
+    const dropdowns = document.querySelectorAll('.color-dropdown');
+    const radioButtons = document.querySelectorAll('input[name="current_color"]');
+    dropdowns.forEach((dropdown, index) => {
             let previousColor = dropdown.value;
 
             dropdown.addEventListener('change', event => {
@@ -194,51 +194,44 @@
                         dropdown.value = previousColor;
                     }
                 });
-
-                selectedColorString = "<p>Selected color: " + selectedColor + "<br>Double click or change a dropdown to change the selected color.</p>";
-                document.getElementsByClassName('selectedButton')[0].innerHTML = selectedColorString;
-                previousColor = selectedColor;
-            });
-
-            dropdown.addEventListener('dblclick', event=> {
-                selectedColor = event.target.value;
-                selectedDropdown = index;
-
-                selectedColorString = "<p>Selected color: " + selectedColor + "<br>Double click or change a dropdown to change the selected color.</p>";
-                document.getElementsByClassName('selectedButton')[0].innerHTML = selectedColorString ;
             });
         });
-
-        let table2Buttons = document.querySelectorAll('.table2button');
-        table2Buttons.forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-
-                let row = parseInt(this.dataset.row) + 1;
-                let col = parseInt(this.dataset.col);
-                col += 65;
-                colToLetter = String.fromCharCode(col);
-                let gridName = colToLetter + row;
-
-                document.getElementById('clickedButton').innerText = "Clicked Button: " + gridName;
-
-                if (selectedColor !== '---') {
-                    let currentClasses = button.getAttribute("class");
-                    let classesList = currentClasses.split(" ");
-                    classesList[2] = selectedColor;
-                    let updatedClasses = classesList.join(" ");
-                    
-                    button.setAttribute("class", updatedClasses);
-
-                    selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
-
-                    dropdownArray = searchAndRemove(dropdownArray, gridName);
-                    dropdownArray[selectedDropdown].push(gridName);
-
-                    populateTable(dropdownArray);
-                }
-            })
+    radioButtons.forEach((radio, index) => {
+        radio.addEventListener('change', () => {
+            selectedColor = dropdowns[index].value;
         });
     });
+
+    let table2Buttons = document.querySelectorAll('.table2button');
+    table2Buttons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let row = parseInt(this.dataset.row) + 1;
+            let col = parseInt(this.dataset.col);
+            col += 65;
+            colToLetter = String.fromCharCode(col);
+            let gridName = colToLetter + row;
+
+            document.getElementById('clickedButton').innerText = "Clicked Button: " + gridName;
+
+            if (selectedColor !== '---') {
+                let currentClasses = button.getAttribute("class");
+                let classesList = currentClasses.split(" ");
+                classesList[2] = selectedColor;
+                let updatedClasses = classesList.join(" ");
+                
+                button.setAttribute("class", updatedClasses);
+
+                selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
+
+                dropdownArray = searchAndRemove(dropdownArray, gridName);
+                dropdownArray[selectedDropdown].push(gridName);
+
+                populateTable(dropdownArray);
+            }
+        })
+    });
+});
 </script>
 </html>
