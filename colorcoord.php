@@ -62,6 +62,7 @@
             
             echo "<form method='post' action='printable_view.php'>";
             echo "<input type='hidden' name='colors' value='$colors'>"; 
+            
             echo "<table border='1' class='table firsttable'>";
             for ($i = 0; $i < $colors; $i++) {
                 echo "<tr>";
@@ -69,7 +70,14 @@
                 foreach ($color_options as $option) {
                     echo "<option value='$option'>$option</option>";
                 }
-                echo "</select></td>";
+                echo "</select>";
+                echo "<input type='radio' name='current_color' value='color$i'";
+                if ($i === 0) {
+                    echo " checked"; 
+                }
+                echo ">";
+                echo "</td>";
+                
                 echo "<td width='80%'><div><p id='dropdown$i'></p></div></td>";
                 echo "</tr>";
             }
