@@ -21,6 +21,7 @@
                 <li><a href="index.php">Home</a></li>
                 <li><a href="aboutus.php">About Us</a></li>
                 <li><a href="colorcoord.php">Color Coordination</a></li>
+                <li><a href="color_selection.php">Color Selection</a></li>
             </ul>
         </div>
             <h1>

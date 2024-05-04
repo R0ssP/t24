@@ -17,6 +17,7 @@
                 <li><a href="index.php">Home</a></li>
                 <li><a href="aboutus.php">About Us</a></li>
                 <li><a href="colorcoord.php">Color Coordination</a></li>
+                <li><a href="color_selection.php">Color Selection</a></li>
             </ul>
         </div>
 
@@ -66,7 +67,7 @@
             echo "<table border='1' class='table firsttable'>";
             for ($i = 0; $i < $colors; $i++) {
                 echo "<tr>";
-                echo "<td width='20%'><select class='option color-dropdown' name='color$i'>";
+                echo "<td width='20%'><select class='option color-dropdown' name='color$i'>"; //color selector
                 foreach ($color_options as $option) {
                     echo "<option value='$option'>$option</option>";
                 }
@@ -91,7 +92,7 @@
             echo "<table border='1' class='table'>";
             echo "<tr><td></td>";
             for ($i = 0; $i < $rows_columns; $i++) {
-                echo "<td style='width: 20px; height: 20px;'>" . chr(65 + $i) . "</td>"; 
+                echo "<td style='width: 20px; height: 20px;'>" . chr(65 + $i) . "</td>"; //Color table
             }
             echo "</tr>";
             for ($i = 0; $i < $rows_columns; $i++) {
