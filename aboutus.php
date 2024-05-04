@@ -71,6 +71,24 @@
         
         </div>
 
+        <div class="HenryL">
+        <h3>
+            Henry Lewis
+        </h3>
+
+        <img src="./images/henry.png" alt="Henry Lewis picture" class="zach-img bordered-image">
+
+        <p>
+        I am a second bachelor's student at CSU majoring in Computer Science. I got my first bachelor's from CU in Geology. 
+        My goal with this class and my CS degree is to further my capabilities with Python and eventually work my way towards becoming a full-stack developer.
+        </p>
+        <p>
+        My biggest aspiration outside of doing well in my classes is to work my way towards building a serviceable knowledge base.
+        I would most like to improve my javascript abilities as well as SQL interfacing.
+        I plan on doing several projects over the summer, creating an animal webiste for my niece and some more resume builders, and am hoping to learn useful skills for that in this class.
+        </p>
+        </div>
+
         </div>
         
         <!-- Leave this div empty it is for the waves above the footer -->
