@@ -34,6 +34,7 @@ header h1{
 }
 
 .footerImg {
+    clear: left;
     position: relative;
     bottom: 5%;
     background-image: url('./images/seamless.png'); 
@@ -43,6 +44,7 @@ header h1{
 }
 
 footer {
+    clear: left;
     font-size: smaller;
     position: relative;
     bottom: 0;
@@ -76,6 +78,52 @@ footer {
 
 .content {
     padding-top: 1%;
+}
+
+.Add {
+    float: left;
+}
+
+.Edit {
+    float: left;
+    padding-left: 2%;
+}
+
+.Remove {
+    float: left;
+    padding-left: 2%;
+}
+
+#add input {
+    background-color: #080E21;
+    color: #6FFFE9;
+    border: 4px groove #2F9A5F;
+}
+
+#edit input {
+    background-color: #080E21;
+    color: #6FFFE9;
+    border: 4px groove #2F9A5F;
+}
+
+#remove input {
+    background-color: #080E21;
+    color: #6FFFE9;
+    border: 4px groove #2F9A5F;
+}
+#reset button {
+    background-color: #080E21;
+    color: #6FFFE9;
+    border: 4px groove #2F9A5F;
+}
+
+.color-table {
+    border: 4px groove #2F9A5F;
+}
+
+.color-table th,
+.color-table td {
+    border: 2px groove #2F9A5F;
 }
 
 .button {
