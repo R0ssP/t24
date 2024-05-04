@@ -1,9 +1,9 @@
 <?php
 // MySQLi connection
 $servername = "faure";
-$username = "EID";
-$password = "*****";
-$database = "EID";
+$username = "spazz";
+$password = "835888859";
+$database = "spazz";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 
 // Fetch data from the table
 $sql_fetch_data = "SELECT * FROM colors";
-$result = $mysqli->query($sql_fetch_data);
+$result = $conn->query($sql_fetch_data);
 
 echo "<h2>Colors Table</h2>";
 echo "<table class='color-table'>";
@@ -30,5 +30,5 @@ while ($row = $result->fetch_assoc()) {
 echo "</table>";
 
 // Close the connection
-$mysqli->close();
+$conn->close();
 ?>

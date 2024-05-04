@@ -58,14 +58,34 @@
             ?>
         </div>
         <div id="message"></div>
-        <?php       
-            $color_options = ['---', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey', 'brown', 'black', 'teal'];
-            
+        <?php
+$servername = "faure";
+$username = "EID";
+$password = "****";
+$database = "EID";
+
+
+        $conn = new mysqli($servername, $username, $password, $database);
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $sql_fetch_colors = "SELECT name FROM colors";
+
+        $result = $conn->query($sql_fetch_colors);
+
+        if ($result->num_rows > 0) {
+            $color_options = [];
+            while ($row = $result->fetch_assoc()) {
+                $color_options[] = $row["name"];
+            }
+
             echo "<form method='post' action='printable_view.php'>";
-            echo "<input type='hidden' name='colors' value='$colors'>"; 
-            
+            echo "<input type='hidden' name='colors' value='" . count($color_options) . "'>";
+
             echo "<table border='1' class='table firsttable'>";
-            for ($i = 0; $i < $colors; $i++) {
+            for ($i = 0; $i < count($color_options); $i++) {
                 echo "<tr>";
                 echo "<td width='20%'><select class='option color-dropdown' name='color$i'>"; //color selector
                 foreach ($color_options as $option) {
@@ -74,11 +94,11 @@
                 echo "</select>";
                 echo "<input type='radio' name='current_color' value='color$i'";
                 if ($i === 0) {
-                    echo " checked"; 
+                    echo " checked";
                 }
                 echo ">";
                 echo "</td>";
-                
+
                 echo "<td width='80%'><div><p id='dropdown$i'></p></div></td>";
                 echo "</tr>";
             }
@@ -86,6 +106,10 @@
             echo "</form>";
 
             echo "<div class='selectedButton'></div>";
+        } else {
+            echo "No colors found in the database";
+        }
+
 
             echo "<form method='get' action='printable_view.php'>";
             echo "<h2>Coordinate Table</h2>";
