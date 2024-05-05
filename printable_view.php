@@ -57,16 +57,19 @@
 
         <?php      
             // Check if colors are set in POST
-            if (isset($_POST['dropdownValues'])) {
+            if (isset($_POST['dropdownValues']) && isset($_POST['clickedCells'])) {
                 $dropdownValuesString = $_POST['dropdownValues'];
                 $dropdownValues = explode(',', $dropdownValuesString);
+
+                $clickedCellsString = $_POST['clickedCells'];
+                $allClickedCells = explode('|', $clickedCellsString);
 
                 echo "<h3>Colors:</h3>";
                 // Display a table with the selected colors
                 echo "<table border='1'>";
 
-                foreach ($dropdownValues as $value) {
-                    echo "<tr><td width='20%'>$value</td><td width='80%'></td></tr>";
+                for ($i = 0; $i < count($dropdownValues); $i++){
+                    echo "<tr><td width='20%'>" . $dropdownValues[$i] . "</td><td width='80%'>" . $allClickedCells[$i] . "</td></tr>";
                 }
                 echo "</table>";
             } else {

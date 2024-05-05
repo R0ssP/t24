@@ -72,6 +72,18 @@ $database = "rossp";
     }
 
     $sql_fetch_colors = "SELECT name FROM colors";
+    $sql_fetch_hex = "SELECT hex_value FROM colors";
+
+    $sql_fetch_hex = $conn->query($sql_fetch_hex);
+
+    if ($sql_fetch_hex->num_rows > 0){
+        $hex_options = [];
+        while ($row = $sql_fetch_hex->fetch_assoc()) {
+            $hex_options[] = $row["hex_value"];
+        }
+    }
+
+    $hex_options_string = implode(' ', $hex_options);
 
     $result = $conn->query($sql_fetch_colors);
 
@@ -155,6 +167,7 @@ $database = "rossp";
         }
         echo "<input type='submit' value='Print' class='button'>";
         echo "<input type='hidden' name='dropdownValues' id='dropdownValuesInput'>";
+        echo "<input type='hidden' name='clickedCells' id='clickedCellsInput'>";
         echo "</form>";
     ?>
     </div>
@@ -203,10 +216,9 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             if(validColor){
+                previousColor = selectedColor;
                 addToDropdownArray(index, selectedColor);
             } 
-            console.log(dropdownValuesArray);
-
         });
     });
 
@@ -218,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     let clickedCellsArray = Array.from({length: dropdowns.length }, () => []);
+    populateTable(clickedCellsArray);
 
     let table2Buttons = document.querySelectorAll('.table2button');
     table2Buttons.forEach(function(button) {
@@ -231,37 +244,36 @@ document.addEventListener('DOMContentLoaded', function() {
             let clickedCoord = colToLetter + row;
 
             document.getElementById('clickedButton').innerText = "Clicked Button: " + clickedCoord;
-            if (selectedColor !== '---') {
-                let currentClasses = button.getAttribute("class");
-                let classesList = currentClasses.split(" ");
-                classesList[2] = selectedColor;
-                let updatedClasses = classesList.join(" ");
-                
-                button.setAttribute("class", updatedClasses);
+            let currentClasses = button.getAttribute("class");
+            let classesList = currentClasses.split(" ");
+            classesList[2] = selectedColor;
+            let updatedClasses = classesList.join(" ");
+            
+            button.setAttribute("class", updatedClasses);
 
-                selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
+            selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
 
-                clickedCellsArray = searchAndRemove(clickedCellsArray, clickedCoord);
-                clickedCellsArray[selectedDropdown].push(clickedCoord);
+            clickedCellsArray = searchAndRemove(clickedCellsArray, clickedCoord);
+            clickedCellsArray[selectedDropdown].push(clickedCoord);
 
-                populateTable(clickedCellsArray);
-            }
+            populateTable(clickedCellsArray);
         })
     });
 
     function addToDropdownArray(index, selectedColor) {
         dropdownValuesArray[index] = selectedColor;
         dropdownValuesString = dropdownValuesArray.join(',');
-        document.getElementById('dropdownValuesInput').value = dropdownValuesString;
+        let hex_options = "<?php echo $hex_options_string; ?>".split(' ');        
+        document.getElementById('dropdownValuesInput').value = dropdownValuesString + " " + hex_options[index];
     }
 
     function populateTable(outerArray) {
         for (let i=0; i < outerArray.length; i++) {
-            let updateString = "dropdown" + i;
-            let updateElement = document.getElementById(updateString);
+            let updateElement = document.getElementById("dropdown" + i);
             let clickedCellsString = createString(clickedCellsArray[i]);
             updateElement.innerHTML = clickedCellsString;
         }
+        document.getElementById('clickedCellsInput').value = finalizeClickedCells();
     }
 
     function createString(innerArray) {
@@ -287,6 +299,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return outerArray;
+    }
+
+    function finalizeClickedCells() {
+        let finalizedString = "";
+        for (let i = 0; i < clickedCellsArray.length; i++) {
+            finalizedString += createString(clickedCellsArray[i]) + "|";
+        };
+        finalizedString = finalizedString.slice(0, -1);
+        return finalizedString;
     }
 });
 </script>
