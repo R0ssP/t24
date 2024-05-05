@@ -101,9 +101,7 @@ $database = "rossp";
             if ($i === 0) {
                 echo " checked";
             }
-            echo ">";
-            echo "</td>";
-
+            echo "></td>";
             echo "<td width='80%'><div><p id='dropdown$i'></p></div></td>";
             echo "</tr>";
         }
@@ -175,10 +173,10 @@ $database = "rossp";
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let selectedColor = '---'; 
     let selectedDropdown = 0;    
     let dropdownValuesString = "";
     const dropdowns = document.querySelectorAll('.color-dropdown');
+    let selectedColor = dropdowns[0].value; 
 
     //initialize default array of values, to be updated once we fix the actual defaults to not be red for every one
     let dropdownValuesArray = Array.from({length: dropdowns.length }, () => '---');
@@ -233,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function() {
             let clickedCoord = colToLetter + row;
 
             document.getElementById('clickedButton').innerText = "Clicked Button: " + clickedCoord;
-
             if (selectedColor !== '---') {
                 let currentClasses = button.getAttribute("class");
                 let classesList = currentClasses.split(" ");
@@ -262,8 +259,8 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i=0; i < outerArray.length; i++) {
             let updateString = "dropdown" + i;
             let updateElement = document.getElementById(updateString);
-            let stringUpdate = createString(clickedCellsArray[i]);
-            updateElement.innerHTML = stringUpdate;
+            let clickedCellsString = createString(clickedCellsArray[i]);
+            updateElement.innerHTML = clickedCellsString;
         }
     }
 

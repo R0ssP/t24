@@ -55,26 +55,25 @@
         <h1>Tridentech Dynamics</h1>
         <h2>Color Coordinate Generation</h2>
 
-        <?php
-session_start();
-      
-// Check if colors are set in POST
-if (isset($_POST['dropdownValues'])) {
-     $dropdownValuesString = $_POST['dropdownValues'];
-     $dropdownValues = explode(',', $dropdownValuesString);
+        <?php      
+            // Check if colors are set in POST
+            if (isset($_POST['dropdownValues'])) {
+                $dropdownValuesString = $_POST['dropdownValues'];
+                $dropdownValues = explode(',', $dropdownValuesString);
 
-    echo "<h3>Colors:</h3>";
-    // Display a table with the selected colors
-    echo "<table border='1'>";
+                echo "<h3>Colors:</h3>";
+                // Display a table with the selected colors
+                echo "<table border='1'>";
 
-    foreach ($dropdownValues as $value) {
-        echo "<tr><td width='20%'>$value</td><td width='80%'></td></tr>";
-    }
-    echo "</table>";
-} else {
-    echo "No colors selected.";
-}
-    ?>
+                foreach ($dropdownValues as $value) {
+                    echo "<tr><td width='20%'>$value</td><td width='80%'></td></tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "No colors selected.";
+            }
+        ?>
+
         <table>
             <tr>
                 <th></th>
