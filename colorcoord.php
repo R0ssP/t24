@@ -175,7 +175,7 @@ $database = "rossp";
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let selectedColor = '---';
+    let selectedColor = '---'; 
     let selectedDropdown = 0;    
     let dropdownValuesString = "";
     const dropdowns = document.querySelectorAll('.color-dropdown');
@@ -219,6 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    let clickedCellsArray = Array.from({length: dropdowns.length }, () => []);
+
     let table2Buttons = document.querySelectorAll('.table2button');
     table2Buttons.forEach(function(button) {
         button.addEventListener('click', function(event) {
@@ -228,9 +230,9 @@ document.addEventListener('DOMContentLoaded', function() {
             let col = parseInt(this.dataset.col);
             col += 65;
             colToLetter = String.fromCharCode(col);
-            let gridName = colToLetter + row;
+            let clickedCoord = colToLetter + row;
 
-            document.getElementById('clickedButton').innerText = "Clicked Button: " + gridName;
+            document.getElementById('clickedButton').innerText = "Clicked Button: " + clickedCoord;
 
             if (selectedColor !== '---') {
                 let currentClasses = button.getAttribute("class");
@@ -242,10 +244,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
 
-                dropdownArray = searchAndRemove(dropdownArray, gridName);
-                dropdownArray[selectedDropdown].push(gridName);
+                clickedCellsArray = searchAndRemove(clickedCellsArray, clickedCoord);
+                clickedCellsArray[selectedDropdown].push(clickedCoord);
 
-                populateTable(dropdownArray);
+                populateTable(clickedCellsArray);
             }
         })
     });
@@ -260,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i=0; i < outerArray.length; i++) {
             let updateString = "dropdown" + i;
             let updateElement = document.getElementById(updateString);
-            let stringUpdate = createString(dropdownArray[i]);
+            let stringUpdate = createString(clickedCellsArray[i]);
             updateElement.innerHTML = stringUpdate;
         }
     }
