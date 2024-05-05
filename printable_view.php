@@ -63,7 +63,7 @@
 
                 $clickedCellsString = $_POST['clickedCells'];
                 $allClickedCells = explode('|', $clickedCellsString);
-
+                
                 echo "<h3>Colors:</h3>";
                 // Display a table with the selected colors
                 echo "<table border='1'>";

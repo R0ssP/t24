@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedDropdown = 0;    
     let dropdownValuesString = "";
     const dropdowns = document.querySelectorAll('.color-dropdown');
-    let selectedColor = dropdowns[0].value; 
+    let activeColor = dropdowns[0].value; 
 
     //initialize default array of values, to be updated once we fix the actual defaults to not be red for every one
     let dropdownValuesArray = Array.from({length: dropdowns.length }, () => '---');
@@ -197,16 +197,25 @@ document.addEventListener('DOMContentLoaded', function() {
         addToDropdownArray(i, dropdownValuesArray[i]);
     }
 
+    const radioButtons = document.querySelectorAll('input[name="current_color"]');
+    radioButtons.forEach((radio, index) => {
+        radio.addEventListener('change', () => {
+            activeColor = dropdowns[index].value;
+
+        });
+    });
+
     dropdowns.forEach((dropdown, index) => {
         let previousColor = dropdown.value;
         addToDropdownArray(index, previousColor);
         dropdown.addEventListener('change', event => {
-            selectedColor = event.target.value;
+            chosenColor = event.target.value;
             let validColor = true;
 
             //check if duplicate
             for (let i = 0; i < dropdownValuesArray.length; i++){
-                if (dropdownValuesArray[i] === selectedColor){
+                let dropdownValueJustColor = dropdownValuesArray[i].split(" ");
+                if (dropdownValueJustColor[0] === chosenColor){
                     let messageNode = document.createTextNode("Duplicate color selection! Reverting to previous value.");
                     let messageElement = document.getElementById("message");
                     messageElement.appendChild(messageNode);
@@ -216,18 +225,16 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             if(validColor){
-                previousColor = selectedColor;
-                addToDropdownArray(index, selectedColor);
-            } 
+                previousColor = chosenColor;
+                addToDropdownArray(index, chosenColor);
+            }
+
+            if(validColor && radioButtons[index].checked){
+                activeColor = chosenColor;
+            }
         });
     });
 
-    const radioButtons = document.querySelectorAll('input[name="current_color"]');
-    radioButtons.forEach((radio, index) => {
-        radio.addEventListener('change', () => {
-            selectedColor = dropdowns[index].value;
-        });
-    });
 
     let clickedCellsArray = Array.from({length: dropdowns.length }, () => []);
     populateTable(clickedCellsArray);
@@ -246,12 +253,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('clickedButton').innerText = "Clicked Button: " + clickedCoord;
             let currentClasses = button.getAttribute("class");
             let classesList = currentClasses.split(" ");
-            classesList[2] = selectedColor;
+            classesList[2] = activeColor;
             let updatedClasses = classesList.join(" ");
             
             button.setAttribute("class", updatedClasses);
+            button.style.backgroundColor = activeColor;
 
-            selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === selectedColor);
+            selectedDropdown = Array.from(dropdowns).findIndex(dropdown => dropdown.value === activeColor);
 
             clickedCellsArray = searchAndRemove(clickedCellsArray, clickedCoord);
             clickedCellsArray[selectedDropdown].push(clickedCoord);
@@ -261,10 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function addToDropdownArray(index, selectedColor) {
-        dropdownValuesArray[index] = selectedColor;
+        let hex_options = "<?php echo $hex_options_string; ?>".split(' ');
+        dropdownValuesArray[index] = selectedColor + " " + hex_options[index];
         dropdownValuesString = dropdownValuesArray.join(',');
-        let hex_options = "<?php echo $hex_options_string; ?>".split(' ');        
-        document.getElementById('dropdownValuesInput').value = dropdownValuesString + " " + hex_options[index];
+        document.getElementById('dropdownValuesInput').value = dropdownValuesString;
     }
 
     function populateTable(outerArray) {
@@ -307,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
             finalizedString += createString(clickedCellsArray[i]) + "|";
         };
         finalizedString = finalizedString.slice(0, -1);
+        console.log(finalizedString);
         return finalizedString;
     }
 });
