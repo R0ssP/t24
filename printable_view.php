@@ -43,40 +43,38 @@
                 margin: 0 auto;
             }
         }
+        h1 {
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <img src="images/logo_grayscale.png" alt="Company Logo" class="logo">
-        <h1><center>Tridentech Dynamics</center></h1>
+        <h1>Tridentech Dynamics</h1>
         <h2>Color Coordinate Generation</h2>
 
         <?php
 session_start();
-
+      
 // Check if colors are set in POST
-if (isset($_POST['colors'])) {
-    $num_colors = $_POST['colors'];
+if (isset($_POST['dropdownValues'])) {
+     $dropdownValuesString = $_POST['dropdownValues'];
+     $dropdownValues = explode(',', $dropdownValuesString);
 
+    echo "<h3>Colors:</h3>";
     // Display a table with the selected colors
     echo "<table border='1'>";
 
-    for ($i = 0; $i < $num_colors; $i++) {
-        $colorKey = 'color' . $i;
-        if (isset($_POST[$colorKey])) {
-            $selected_color = $_POST[$colorKey];
-            echo "<tr><td width='20%'>$selected_color "  . "</td><td width='80%'></td></tr>";
-        }
+    foreach ($dropdownValues as $value) {
+        echo "<tr><td width='20%'>$value</td><td width='80%'></td></tr>";
     }
     echo "</table>";
 } else {
     echo "No colors selected.";
 }
     ?>
-        </table>
-
-        <h3>Coordinate Table</h3>
         <table>
             <tr>
                 <th></th>
@@ -99,5 +97,4 @@ if (isset($_POST['colors'])) {
         </table>
     </div>
 </body>
-
 </html>

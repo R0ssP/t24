@@ -30,7 +30,7 @@
 
 
 <?php
-if(!isset($_SESSION['load'])) {
+if(!isset($_SESSION['load']) || empty($_SESSION['load'])) {
     require_once 'create_color_selection.php';
 
     $_SESSION['load'] = true;
