@@ -90,6 +90,16 @@
         </p>
         </div>
 
+        <div class="RossP">
+        <h3>
+            Ross Pavey
+        </h3>
+
+        <img src="./images/RossPavey_Headshot.jpg" alt="Ross Pavey headshot" class="zach-img bordered-image">
+
+        <p>My name is Ross Pavey. I'm currently a Senior at Colorado State University studying Computer Science, while working part-time as a software engineering intern at HP. I love spending time outdoors, making music, and playing video games!</p>
+        </div>
+
         </div>
         
         <!-- Leave this div empty it is for the waves above the footer -->
