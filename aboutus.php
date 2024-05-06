@@ -21,6 +21,7 @@
                 <li><a href="index.php">Home</a></li>
                 <li><a href="aboutus.php">About Us</a></li>
                 <li><a href="colorcoord.php">Color Coordination</a></li>
+                <li><a href="color_selection.php">Color Selection</a></li>
             </ul>
         </div>
             <h1>
@@ -87,6 +88,16 @@
         I would most like to improve my javascript abilities as well as SQL interfacing.
         I plan on doing several projects over the summer, creating an animal webiste for my niece and some more resume builders, and am hoping to learn useful skills for that in this class.
         </p>
+        </div>
+
+        <div class="RossP">
+        <h3>
+            Ross Pavey
+        </h3>
+
+        <img src="./images/RossPavey_Headshot.jpg" alt="Ross Pavey headshot" class="zach-img bordered-image">
+
+        <p>My name is Ross Pavey. I'm currently a Senior at Colorado State University studying Computer Science, while working part-time as a software engineering intern at HP. I love spending time outdoors, making music, and playing video games!</p>
         </div>
 
         </div>
