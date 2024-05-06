@@ -60,9 +60,9 @@
         <div id="message"></div>
         <?php
 $servername = "faure";
-$username = "EID";
-$password = "****";
-$database = "EID";
+$username = "spazz";
+$password = "835888859";
+$database = "spazz";
 
 
         $conn = new mysqli($servername, $username, $password, $database);
@@ -80,12 +80,29 @@ $database = "EID";
             while ($row = $result->fetch_assoc()) {
                 $color_options[] = $row["name"];
             }
+        // SQL to fetch hex colors
+$sql_fetch_hex_values = "SELECT hex_value FROM colors";
 
+// Execute query to fetch colors
+$result = $conn->query($sql_fetch_hex_values);
+
+// Array to store hex colors
+$hex_colors = [];
+
+// Fetch hex colors and store them in the array
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $hex_colors[] = $row["hex_value"];
+    }
+}
+echo "<script>";
+echo "var hexColors = " . json_encode($hex_colors) . ";";
+echo "</script>";
+            $number_of_colors = isset($_GET['colors']) ? (int)$_GET['colors'] : 0;
             echo "<form method='post' action='printable_view.php'>";
-            echo "<input type='hidden' name='colors' value='" . count($color_options) . "'>";
-
+            echo "<input type='hidden' name='colors' value='" . $number_of_colors . "'>";
             echo "<table border='1' class='table firsttable'>";
-            for ($i = 0; $i < count($color_options); $i++) {
+            for ($i = 0; $i < $number_of_colors; $i++) {
                 echo "<tr>";
                 echo "<td width='20%'><select class='option color-dropdown' name='color$i'>"; //color selector
                 foreach ($color_options as $option) {
@@ -227,6 +244,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function setCellColor(cell, colorIndex) {
+    cell.style.backgroundColor = hexColors[colorIndex];
+}
+
     let table2Buttons = document.querySelectorAll('.table2button');
     table2Buttons.forEach(function(button) {
         button.addEventListener('click', function(event) {
@@ -252,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 dropdownArray = searchAndRemove(dropdownArray, gridName);
                 dropdownArray[selectedDropdown].push(gridName);
-
+                setCellColor(button, selectedDropdown);
                 populateTable(dropdownArray);
             }
         })
