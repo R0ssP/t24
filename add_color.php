@@ -3,9 +3,9 @@ session_start();
 
 // MySQLi connection
 $servername = "faure";
-$username = "EID";
-$password = "Password";
-$database = "EID";
+$username = "spazz";
+$password = "835888859";
+$database = "spazz";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);

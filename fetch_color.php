@@ -1,7 +1,7 @@
 <?php
 $color = $_GET['color'];
 // Connect to your MySQL database
-$mysqli = new mysqli('faure', 'EID', 'Password', 'EID');
+$mysqli = new mysqli('faure', 'spazz', '835888859', 'spazz');
 
 if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);

@@ -60,9 +60,9 @@
         <div id="message"></div>
         <?php
 $servername = "faure";
-$username = "zrnall";
-$password = "Tiffany06833157";
-$database = "zrnall";
+$username = "spazz";
+$password = "835888859";
+$database = "spazz";
 
 
     $conn = new mysqli($servername, $username, $password, $database);

@@ -60,7 +60,7 @@ if (!$valid) {
 }
 
 // Connect to your database
-$db = new mysqli('faure', 'zrnall', 'Tiffany06833157', 'zrnall');
+$db = new mysqli('faure', 'spazz', '835888859', 'spazz');
 
 if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
@@ -159,6 +159,8 @@ echo "<input type='hidden' name='colors' value='$colors'>";
 if (isset($_GET['rows_columns']) && isset($_GET['colors'])) {
     echo "<input type='hidden' name='rows_columns' value='" . htmlspecialchars($_GET['rows_columns']) . "'>";
     echo "<input type='hidden' name='colors' value='" . htmlspecialchars($_GET['colors']) . "'>";
+    echo "<input type='hidden' name='clickedCells' value='" . htmlspecialchars($_POST['clickedCells']) . "'>";
+
 }
 echo "<input type='submit' value='Print' class='button'>";
 echo "</form>";
@@ -220,7 +222,7 @@ colorRow.innerText = colorCoordinates[selectedColor].join(', ');
     });
     }
 
-    var dropdowns = document.querySelectorAll('.firsttable select');
+    dropdowns = document.querySelectorAll('.firsttable select');
     dropdowns.forEach(function(dropdown) {
     dropdown.addEventListener('change', function() {
         var colorName = dropdown.name.replace('color', '');
@@ -251,11 +253,48 @@ colorRow.innerText = colorCoordinates[selectedColor].join(', ');
         
         
         ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('form');
+
+    // Add a submit event listener to the form
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        
+        var clickedCells = [];
+
+        // Get all table cells in the coordinate table
+        var cells = document.querySelectorAll('#coordinateTable td');
+
+        // Loop through each cell to check if it's been clicked
+        cells.forEach(function(cell) {
+            if (cell.style.backgroundColor) {
+                // If the cell has a background color, it's been clicked
+                // Get the row and column index of the clicked cell
+                var rowIndex = cell.parentNode.rowIndex;
+                var columnIndex = cell.cellIndex;
+
+                // Convert the column index to a letter (A, B, C, etc.)
+                var columnLetter = String.fromCharCode(65 + columnIndex - 1);
+
+                // Add the coordinates to the clickedCells array
+                clickedCells.push(columnLetter + rowIndex);
+            }
+        });
+
+        // Set the value of a hidden input field in the form to pass the clicked coordinates
+        document.getElementById('clickedCells').value = clickedCells.join('|');
+
+        // Submit the form
+        form.submit();
+    });
+});
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var usedColors = [];
-    var dropdowns = document.querySelectorAll('.color-dropdown');
+    dropdowns = document.querySelectorAll('.color-dropdown');
 
     dropdowns.forEach(function(dropdown, index) {
         usedColors[index] = dropdown.value;
@@ -274,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
             <script>
-const dropdowns = document.querySelectorAll('.color-dropdown');
+dropdowns = document.querySelectorAll('.color-dropdown');
 
 dropdowns.forEach(dropdown => {
     let previousColor = dropdown.value;

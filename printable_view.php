@@ -104,7 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <?php      
             // Check if colors are set in POST
-            if (isset($_POST['dropdownValues']) && isset($_POST['clickedCells'])) {
+            if (isset($_GET['dropdownValues']) && isset($_GET['clickedCells'])) {
+                echo("<p>hello world</p>");
                 $dropdownValuesString = $_POST['dropdownValues'];
                 $dropdownValues = explode(',', $dropdownValuesString);
 
