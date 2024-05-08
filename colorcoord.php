@@ -47,74 +47,139 @@
         }
 
         $valid = true;
-        $rows_columns = isset($_GET['rows_columns']) ? $_GET['rows_columns'] : null;
-        $colors = isset($_GET['colors']) ? $_GET['colors'] : null;
+$rows_columns = isset($_GET['rows_columns']) ? $_GET['rows_columns'] : null;
+$colors = isset($_GET['colors']) ? $_GET['colors'] : null;
 
-        $valid = validateInput($rows_columns, 1, 26, "Rows & Columns") && $valid;
-        $valid = validateInput($colors, 1, 10, "Number of colors") && $valid;
+$valid = validateInput($rows_columns, 1, 26, "Rows & Columns") && $valid;
+$valid = validateInput($colors, 1, 10, "Number of colors") && $valid;
 
-        if (!$valid) {
-            exit;
-        }
-        
-        $color_options = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey', 'brown', 'black', 'teal'];
+if (!$valid) {
+    exit;
+}
 
+$color_options = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey', 'brown', 'black', 'teal'];
 
-        
-        
-        echo "<form method='post' action='printable_view.php'>";
-        echo "<input type='hidden' name='colors' value='$colors'>"; 
-        
-        echo "<table border='1' class='table firsttable'>";
-        for ($i = 0; $i < $colors; $i++) {
-            echo "<tr>";
-            echo "<td width='20%'><select class='option color-dropdown' name='color$i'>";
-            foreach ($color_options as $option) {
-                echo "<option value='$option'>$option</option>";
-            }
-            echo "</select></td>";
-            echo "<td width='80%'></td>";
-            echo "</tr>";
-        }
-        echo "</table>";
+echo "<form method='post' action='printable_view.php'>";
+echo "<input type='hidden' name='colors' value='$colors'>"; 
 
+echo "<table border='1' class='table firsttable'>";
+for ($i = 0; $i < $colors; $i++) {
+    echo "<tr>";
+    echo "<td width='10%'><input type='radio' name='selectedColor' value='$i'" . ($i == 0 ? " checked" : "") . "></td>";
+    echo "<td width='10%'><select class='option color-dropdown' name='color$i'>";
+    foreach ($color_options as $index => $option) {
+        $selected = $i === $index ? 'selected' : '';
+        echo "<option value='$option' $selected>$option</option>";
+    }
+    echo "</select></td>";
+    echo "<td width='80%'></td>";
+    echo "</tr>";
+}
+echo "</table>";
 
+echo "<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var selectedColors = [];
+    var dropdowns = document.querySelectorAll('.color-dropdown');
+    dropdowns.forEach(function(dropdown, index) {
+        selectedColors[index] = dropdown.value;
+        dropdown.addEventListener('change', function() {
+            var oldColor = selectedColors[index];
+            var newColor = this.value;
+            selectedColors[index] = newColor;
+
+            // Select all cells in the coordinate table with the old color
+            var cells = document.querySelectorAll('#coordinateTable td');
+            cells.forEach(function(cell) {
+                if (cell.style.backgroundColor === oldColor) {
+                    // Change their color to the new one
+                    cell.style.backgroundColor = newColor;
+                }
+            });
+        });
+    });
+});
+</script>";
+
+//debugging
+echo "<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var selectedColors = [];
+    var dropdowns = document.querySelectorAll('.color-dropdown');
+    dropdowns.forEach(function(dropdown, index) {
+        selectedColors[index] = dropdown.value;
+        dropdown.addEventListener('change', function() {
+            selectedColors[index] = this.value;
+            console.log(selectedColors);
+        });
+    });
+});
+</script>";
         
         
     
         
-        echo "<form method='get' action='printable_view.php'>";
+echo "<form method='get' action='printable_view.php'>";
 
-
-        echo "<h2>Coordinate Table</h2>";
-        echo "<table border='1' class='table'>";
-        echo "<tr><td></td>";
-        for ($i = 0; $i < $rows_columns; $i++) {
-            echo "<td style='width: 15px; height: 15px;'>" . chr(65 + $i) . "</td>"; 
-        }
-        echo "</tr>";
-        for ($i = 0; $i < $rows_columns; $i++) {
-            echo "<tr>";
-            echo "<td style='width: 15px; height: 15px;'>" . ($i + 1) . "</td>"; 
-            for ($j = 0; $j < $rows_columns; $j++) {
-                echo "<td style='width: 15px; height: 15px;'></td>"; 
-            }
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo "<form method='post' action='printable_view.php'>";
-        echo "<input type='hidden' name='colors' value='$colors'>"; 
-        if (isset($_GET['rows_columns']) && isset($_GET['colors'])) {
-            echo "<input type='hidden' name='rows_columns' value='" . htmlspecialchars($_GET['rows_columns']) . "'>";
-            echo "<input type='hidden' name='colors' value='" . htmlspecialchars($_GET['colors']) . "'>";
-        for ($i = 0; $i < $_GET['colors']; $i++) {
-            $colorName = 'color' . $i;
-            if (isset($_GET[$colorName])) { 
-                echo "<input type='hidden' name='$colorName' value='" . htmlspecialchars($_GET[$colorName]) . "'>";
-            }
+echo "<h2>Coordinate Table</h2>";
+echo "<table border='1' class='table' id='coordinateTable'>";
+echo "<tr><td></td>";
+for ($i = 0; $i < $rows_columns; $i++) {
+    echo "<td style='width: 15px; height: 15px;'>" . chr(65 + $i) . "</td>"; 
+}
+echo "</tr>";
+for ($i = 0; $i < $rows_columns; $i++) {
+    echo "<tr>";
+    echo "<td style='width: 15px; height: 15px;'>" . ($i + 1) . "</td>"; 
+    for ($j = 0; $j < $rows_columns; $j++) {
+        echo "<td style='width: 15px; height: 15px;'></td>"; 
+    }
+    echo "</tr>";
+}
+echo "</table>";
+echo "<form method='post' action='printable_view.php'>";
+echo "<input type='hidden' name='colors' value='$colors'>"; 
+if (isset($_GET['rows_columns']) && isset($_GET['colors'])) {
+    echo "<input type='hidden' name='rows_columns' value='" . htmlspecialchars($_GET['rows_columns']) . "'>";
+    echo "<input type='hidden' name='colors' value='" . htmlspecialchars($_GET['colors']) . "'>";
+    for ($i = 0; $i < $_GET['colors']; $i++) {
+        $colorName = 'color' . $i;
+        if (isset($_GET[$colorName])) { 
+            echo "<input type='hidden' name='$colorName' value='" . htmlspecialchars($_GET[$colorName]) . "'>";
         }
     }
-        echo "<input type='submit' value='Print' class='button'>";
+}
+echo "<input type='submit' value='Print' class='button'>";
+
+echo "<script>
+    var table = document.getElementById('coordinateTable');
+    var cells = table.getElementsByTagName('td');
+    var colorCoordinates = [];
+    for (var i = 0; i < cells.length; i++) {
+        cells[i].addEventListener('click', function() {
+            var parentRow = this.parentNode;
+            var rowIndex = Array.from(parentRow.parentNode.children).indexOf(parentRow);
+            var cellIndex = Array.from(parentRow.children).indexOf(this);
+
+            // Ignore cells in the first row and first column
+            if (rowIndex === 0 || cellIndex === 0) {
+                return;
+            }
+
+            var selectedColor = document.querySelector('input[name=\"selectedColor\"]:checked').value;
+            var colorDropdown = document.querySelector('select[name=\"color' + selectedColor + '\"]');
+            this.style.backgroundColor = colorDropdown.value;
+            var coordinate = String.fromCharCode(65 + this.cellIndex - 1) + this.parentNode.rowIndex;
+            if (!colorCoordinates[selectedColor]) {
+                colorCoordinates[selectedColor] = [];
+            }
+            colorCoordinates[selectedColor].push(coordinate);
+            colorCoordinates[selectedColor].sort();
+            var colorRow = document.querySelector('.firsttable tr:nth-child(' + (parseInt(selectedColor) + 1) + ') td:last-child');
+            colorRow.innerText = colorCoordinates[selectedColor].join(', ');
+        });
+    }
+</script>";
             echo "</form>";
         
         
@@ -151,6 +216,8 @@ dropdowns.forEach(dropdown => {
     });
 });
 </script>
+
+
     </div>
 
     <!-- Leave this div empty it is for the waves above the footer -->
