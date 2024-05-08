@@ -37,6 +37,7 @@
             <input type="submit" value="Generate" class="button">
         </form>
         <div id="message"></div>
+
         <?php
         function validateInput($value, $min, $max, $name)
         {
@@ -84,13 +85,12 @@ $db->close();
 
 echo "<form method='post' action='printable_view.php'>";
 echo "<input type='hidden' name='colors' value='$colors'>"; 
-
 echo "<table border='1' class='table firsttable'>";
 $color_names = array_keys($color_options);
 for ($i = 0; $i < $colors; $i++) {
     echo "<tr>";
     echo "<td width='10%'><input type='radio' name='selectedColor' value='$i'" . ($i == 0 ? " checked" : "") . "></td>";
-    echo "<td width='10%'><select class='option color-dropdown' name='color$i'>";
+    echo "<td width='10%'><select class='option color-dropdown' id='$i' name='color$i'>";
     foreach ($color_options as $name => $hex) {
         $selected = $color_names[$i] === $name ? 'selected' : '';
         echo "<option value='$hex' $selected>$name</option>";
@@ -105,44 +105,31 @@ echo "<script>
 document.addEventListener('DOMContentLoaded', function() {
     var selectedColors = [];
     var dropdowns = document.querySelectorAll('.color-dropdown');
+
     dropdowns.forEach(function(dropdown, index) {
         selectedColors[index] = dropdown.value;
 
-        // Add an event listener to each dropdown
         dropdown.addEventListener('change', function() {
-            // Get the old and new color values
             var oldColor = selectedColors[index];
             var newColor = dropdown.value;
 
-            // Update the selected color for this dropdown
             selectedColors[index] = newColor;
 
-            // Change the color of the cells in the coordinate table that match the old color
             var cells = document.querySelectorAll('.coordinate-table td');
             cells.forEach(function(cell) {
                 if (cell.style.backgroundColor === oldColor) {
                     cell.style.backgroundColor = newColor;
                 }
             });
+
+            // Log the selectedColors array to the console
+            
         });
     });
 });
 </script>";
 
-//debugging
-echo "<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var selectedColors = [];
-    var dropdowns = document.querySelectorAll('.color-dropdown');
-    dropdowns.forEach(function(dropdown, index) {
-        selectedColors[index] = dropdown.value;
-        dropdown.addEventListener('change', function() {
-            selectedColors[index] = this.value;
-            console.log(selectedColors);
-        });
-    });
-});
-</script>";
+
         
         
     
@@ -165,19 +152,19 @@ for ($i = 0; $i < $rows_columns; $i++) {
     echo "</tr>";
 }
 echo "</table>";
-echo "<form method='post' action='printable_view.php'>";
+
+
+echo "<form method='post' id='colorForm' action='printable_view.php'>";
 echo "<input type='hidden' name='colors' value='$colors'>"; 
 if (isset($_GET['rows_columns']) && isset($_GET['colors'])) {
     echo "<input type='hidden' name='rows_columns' value='" . htmlspecialchars($_GET['rows_columns']) . "'>";
     echo "<input type='hidden' name='colors' value='" . htmlspecialchars($_GET['colors']) . "'>";
-    for ($i = 0; $i < $_GET['colors']; $i++) {
-        $colorName = 'color' . $i;
-        if (isset($_GET[$colorName])) { 
-            echo "<input type='hidden' name='$colorName' value='" . htmlspecialchars($_GET[$colorName]) . "'>";
-        }
-    }
 }
 echo "<input type='submit' value='Print' class='button'>";
+echo "</form>";
+
+
+
 
 echo "<script>
     function hexToRgb(hex) {
@@ -260,17 +247,31 @@ colorRow.innerText = colorCoordinates[selectedColor].join(', ');
     });
 });
 </script>";
-            echo "</form>";
+            
         
         
         ?>
-        <script>
-        var selectedColors = [];
-    
-        function saveColor(color, index) {
-            selectedColors[index] = color;
-        }
-        </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var usedColors = [];
+    var dropdowns = document.querySelectorAll('.color-dropdown');
+
+    dropdowns.forEach(function(dropdown, index) {
+        usedColors[index] = dropdown.value;
+
+        dropdown.addEventListener('change', function() {
+            // Update the usedColors array at the corresponding index
+            usedColors[index] = dropdown.value;
+            console.log("Colors: " + usedColors);
+
+            // Store usedColors in sessionStorage
+            sessionStorage.setItem('usedColors', JSON.stringify(usedColors));
+        });
+    });
+});
+</script>
+
 
             <script>
 const dropdowns = document.querySelectorAll('.color-dropdown');
@@ -306,6 +307,8 @@ document.querySelectorAll('.table.firsttable td').forEach(function(td) {
     });
 });
 </script>
+
+
 
 
     </div>
