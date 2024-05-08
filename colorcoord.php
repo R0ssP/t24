@@ -19,6 +19,7 @@
                 <li><a href="index.php">Home</a></li>
                 <li><a href="aboutus.php">About Us</a></li>
                 <li><a href="colorcoord.php">Color Coordination</a></li>
+                <li><a href="color_selection.php">Color Selection</a></li>
             </ul>
         </div>
 
@@ -57,19 +58,42 @@ if (!$valid) {
     exit;
 }
 
-$color_options = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey', 'brown', 'black', 'teal'];
+// Connect to your database
+$db = new mysqli('faure', 'zrnall', 'Tiffany06833157', 'zrnall');
+
+if ($db->connect_error) {
+    die("Connection failed: " . $db->connect_error);
+}
+
+// Execute a query to fetch the color options
+$result = $db->query("SELECT name, hex_value FROM colors");
+
+// Check if the query was successful
+if (!$result) {
+    die("Query failed: " . $db->error);
+}
+
+// Fetch the color options and store them in an associative array
+$color_options = [];
+while ($row = $result->fetch_assoc()) {
+    $color_options[$row['name']] = $row['hex_value'];
+}
+
+// Close the database connection
+$db->close();
 
 echo "<form method='post' action='printable_view.php'>";
 echo "<input type='hidden' name='colors' value='$colors'>"; 
 
 echo "<table border='1' class='table firsttable'>";
+$color_names = array_keys($color_options);
 for ($i = 0; $i < $colors; $i++) {
     echo "<tr>";
     echo "<td width='10%'><input type='radio' name='selectedColor' value='$i'" . ($i == 0 ? " checked" : "") . "></td>";
     echo "<td width='10%'><select class='option color-dropdown' name='color$i'>";
-    foreach ($color_options as $index => $option) {
-        $selected = $i === $index ? 'selected' : '';
-        echo "<option value='$option' $selected>$option</option>";
+    foreach ($color_options as $name => $hex) {
+        $selected = $color_names[$i] === $name ? 'selected' : '';
+        echo "<option value='$hex' $selected>$name</option>";
     }
     echo "</select></td>";
     echo "<td width='80%'></td>";
@@ -83,16 +107,20 @@ document.addEventListener('DOMContentLoaded', function() {
     var dropdowns = document.querySelectorAll('.color-dropdown');
     dropdowns.forEach(function(dropdown, index) {
         selectedColors[index] = dropdown.value;
+
+        // Add an event listener to each dropdown
         dropdown.addEventListener('change', function() {
+            // Get the old and new color values
             var oldColor = selectedColors[index];
-            var newColor = this.value;
+            var newColor = dropdown.value;
+
+            // Update the selected color for this dropdown
             selectedColors[index] = newColor;
 
-            // Select all cells in the coordinate table with the old color
-            var cells = document.querySelectorAll('#coordinateTable td');
+            // Change the color of the cells in the coordinate table that match the old color
+            var cells = document.querySelectorAll('.coordinate-table td');
             cells.forEach(function(cell) {
                 if (cell.style.backgroundColor === oldColor) {
-                    // Change their color to the new one
                     cell.style.backgroundColor = newColor;
                 }
             });
@@ -152,9 +180,16 @@ if (isset($_GET['rows_columns']) && isset($_GET['colors'])) {
 echo "<input type='submit' value='Print' class='button'>";
 
 echo "<script>
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})$/i.exec(hex);
+        return result ? 'rgb(' + parseInt(result[1], 16) + ', ' + parseInt(result[2], 16) + ', ' + parseInt(result[3], 16) + ')' : null;
+    }
+
     var table = document.getElementById('coordinateTable');
     var cells = table.getElementsByTagName('td');
     var colorCoordinates = [];
+    var selectedColors = {};
+
     for (var i = 0; i < cells.length; i++) {
         cells[i].addEventListener('click', function() {
             var parentRow = this.parentNode;
@@ -169,16 +204,61 @@ echo "<script>
             var selectedColor = document.querySelector('input[name=\"selectedColor\"]:checked').value;
             var colorDropdown = document.querySelector('select[name=\"color' + selectedColor + '\"]');
             this.style.backgroundColor = colorDropdown.value;
+            selectedColors[selectedColor] = hexToRgb(colorDropdown.value);
+
             var coordinate = String.fromCharCode(65 + this.cellIndex - 1) + this.parentNode.rowIndex;
-            if (!colorCoordinates[selectedColor]) {
-                colorCoordinates[selectedColor] = [];
-            }
-            colorCoordinates[selectedColor].push(coordinate);
-            colorCoordinates[selectedColor].sort();
-            var colorRow = document.querySelector('.firsttable tr:nth-child(' + (parseInt(selectedColor) + 1) + ') td:last-child');
-            colorRow.innerText = colorCoordinates[selectedColor].join(', ');
-        });
+        if (!colorCoordinates[selectedColor]) {
+            colorCoordinates[selectedColor] = [];
+        }
+
+        // Remove the coordinate from its previous color
+for (var color in colorCoordinates) {
+    var index = colorCoordinates[color].indexOf(coordinate);
+    if (index !== -1) {
+        colorCoordinates[color].splice(index, 1);
+
+        // Update the color row of the old color
+        var oldColorRow = document.querySelector('.firsttable tr:nth-child(' + (parseInt(color) + 1) + ') td:last-child');
+        oldColorRow.innerText = colorCoordinates[color].join(', ');
     }
+}
+
+// Always add the coordinate to the selected color
+colorCoordinates[selectedColor].push(coordinate);
+colorCoordinates[selectedColor] = Array.from(new Set(colorCoordinates[selectedColor])); // Remove duplicates
+colorCoordinates[selectedColor].sort();
+
+var colorRow = document.querySelector('.firsttable tr:nth-child(' + (parseInt(selectedColor) + 1) + ') td:last-child');
+colorRow.innerText = colorCoordinates[selectedColor].join(', ');
+    });
+    }
+
+    var dropdowns = document.querySelectorAll('.firsttable select');
+    dropdowns.forEach(function(dropdown) {
+    dropdown.addEventListener('change', function() {
+        var colorName = dropdown.name.replace('color', '');
+        var oldColor = selectedColors[colorName];
+        var newColor = hexToRgb(dropdown.value);
+
+        for (var i = 0; i < cells.length; i++) {
+            if (cells[i].style.backgroundColor === oldColor) {
+                cells[i].style.backgroundColor = newColor;
+            }
+        }
+
+        selectedColors[colorName] = newColor;
+
+        // Update colorCoordinates array and first table
+        if (colorCoordinates[colorName]) {
+            var newColorName = 'color' + dropdown.selectedIndex;
+            colorCoordinates[newColorName] = colorCoordinates[colorName];
+            delete colorCoordinates[colorName];
+
+            var colorRow = document.querySelector('.firsttable tr:nth-child(' + (dropdown.selectedIndex + 1) + ') td:last-child');
+            colorRow.innerText = colorCoordinates[newColorName].join(', ');
+        }
+    });
+});
 </script>";
             echo "</form>";
         
@@ -213,6 +293,16 @@ dropdowns.forEach(dropdown => {
         });
 
         previousColor = selectedColor; 
+    });
+});
+</script>
+
+<script>
+// Use JavaScript to change the color of the table cells when clicked
+document.querySelectorAll('.table.firsttable td').forEach(function(td) {
+    td.addEventListener('click', function() {
+        var colorHex = document.querySelector('input[name="selectedColor"]:checked').value;
+        this.style.backgroundColor = colorHex;
     });
 });
 </script>
