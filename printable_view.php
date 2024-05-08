@@ -43,40 +43,87 @@
                 margin: 0 auto;
             }
         }
+        h1 {
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <img src="images/logo_grayscale.png" alt="Company Logo" class="logo">
-        <h1><center>Tridentech Dynamics</center></h1>
+        <h1>Tridentech Dynamics</h1>
+
+
         <h2>Color Coordinate Generation</h2>
 
-        <?php
-session_start();
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var usedColors = JSON.parse(sessionStorage.getItem('usedColors')) || [];
+    console.log("Colors: " + usedColors);
 
-// Check if colors are set in POST
-if (isset($_POST['colors'])) {
-    $num_colors = $_POST['colors'];
+    // Create a table from the usedColors array
+    var table = document.createElement('table');
+    table.border = '1';
+    table.style.width = '75%'; // Make the table take up the full width of its container
+    table.style.margin = '0 auto'; // Center the table horizontally
 
-    // Display a table with the selected colors
-    echo "<table border='1'>";
+    usedColors.forEach(function(color) {
+        // Make an AJAX call to fetch color details
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_color.php?color=' + encodeURIComponent(color), true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var result = JSON.parse(xhr.responseText);
+                if (result && result.name && result.hex_value) {
+                    var row = document.createElement('tr');
+                    var cell1 = document.createElement('td');
+                    cell1.textContent = result.name + " - " + result.hex_value;
+                    cell1.style.width = '1%'; // Make the first column only as wide as the text
+                    cell1.style.whiteSpace = 'nowrap'; // Prevent the text from wrapping to the next line
+                    row.appendChild(cell1);
 
-    for ($i = 0; $i < $num_colors; $i++) {
-        $colorKey = 'color' . $i;
-        if (isset($_POST[$colorKey])) {
-            $selected_color = $_POST[$colorKey];
-            echo "<tr><td width='20%'>$selected_color "  . "</td><td width='80%'></td></tr>";
-        }
-    }
-    echo "</table>";
-} else {
-    echo "No colors selected.";
-}
-    ?>
-        </table>
+                    // Create a second empty cell and append it to the row
+                    var cell2 = document.createElement('td');
+                    row.appendChild(cell2);
 
-        <h3>Coordinate Table</h3>
+                    table.appendChild(row);
+                }
+            }
+        };
+        xhr.send();
+    });
+
+    // Select the h2 element
+    var h2 = document.querySelector('h2');
+
+    // Insert the table before the h2 element
+    h2.parentNode.insertBefore(table, h2);
+});
+</script>
+
+        <?php      
+            // Check if colors are set in POST
+            if (isset($_POST['dropdownValues']) && isset($_POST['clickedCells'])) {
+                $dropdownValuesString = $_POST['dropdownValues'];
+                $dropdownValues = explode(',', $dropdownValuesString);
+
+                $clickedCellsString = $_POST['clickedCells'];
+                $allClickedCells = explode('|', $clickedCellsString);
+                
+                echo "<h3>Colors:</h3>";
+                // Display a table with the selected colors
+                echo "<table border='1'>";
+
+                for ($i = 0; $i < count($dropdownValues); $i++){
+                    echo "<tr><td width='20%'>" . $dropdownValues[$i] . "</td><td width='80%'>" . $allClickedCells[$i] . "</td></tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "No colors selected.";
+            }
+        ?>
+
         <table>
             <tr>
                 <th></th>
@@ -99,5 +146,4 @@ if (isset($_POST['colors'])) {
         </table>
     </div>
 </body>
-
 </html>
